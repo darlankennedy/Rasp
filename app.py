@@ -3,22 +3,24 @@ from flask import Flask, render_template, request
 app = Flask(__name__, static_url_path='/static')
 GPIO.setmode(GPIO.BCM)
 pins = {
-   14 : {'name' : 'Garage Door', 'state' : GPIO.LOW}
+   14 : {'name' : 'Garage Door', 'state' : GPIO.LOW},
+   15 : {'name' : 'Garage Door', 'state' : GPIO.LOW}
    }
 for pin in pins:
    GPIO.setup(pin, GPIO.OUT)
    GPIO.output(pin, GPIO.LOW)
+
 @app.route("/")
 def main():
     for pin in pins:
       pins[pin]['state'] = GPIO.input(pin)
-   templateData = {
-      'pins' : pins
-      }
-      return render_template('main.html', **templateData)
+      
+    templateData = {'pins' : pins}
+    return render_template('main.html', **templateData)
 @app.route("/<changePin>/<action>", methods=['GET', 'POST'])
 def action(changePin, action):
    changePin = int(changePin)
+   print(changePin)
    deviceName = pins[changePin]['name']
    if action == "open":
       GPIO.output(changePin, GPIO.HIGH)
